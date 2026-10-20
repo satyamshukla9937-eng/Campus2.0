@@ -1,0 +1,2023 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus 2.0: Find your people</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            campus: {
+              darkest: '#070c1a',
+              dark: '#0b1329',
+              card: '#111c38',
+              cardHover: '#162347',
+              border: '#1f2e54',
+              blue: '#00a6ff',
+              blueHover: '#0090e0',
+              cyan: '#38bdf8',
+              purple: '#8b5cf6',
+              green: '#10b981',
+              neon: '#00ffaa',
+              orange: '#f59e0b',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 4s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #070c1a;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    .glow-blue {
+      box-shadow: 0 0 25px -5px rgba(0, 166, 255, 0.35);
+    }
+    .glow-purple {
+      box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.35);
+    }
+    .glow-green {
+      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+    }
+    .glass-panel {
+      background: rgba(17, 28, 56, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070c1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2e54;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00a6ff;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-campus-blue selection:text-white">
+  <!-- ================= TOP NAVIGATION ================= -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-campus-border/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo & Campus Tag -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTab('landing')">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-campus-blue to-campus-purple flex items-center justify-center shadow-lg shadow-campus-blue/20">
+          <i data-lucide="radio" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <span class="text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
+            Campus <span class="text-campus-blue">2.0</span>
+          </span>
+        </div>
+        <span class="hidden md:inline-flex text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-campus-blue/10 border border-campus-blue/30 text-campus-blue">
+          Prototype v1.0 • 5,000 Users
+        </span>
+      </div>
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
+        <button onclick="navigateTab('landing')" id="nav-landing" class="nav-btn px-3 py-1.5 rounded-lg text-white bg-campus-card border border-campus-border">
+          Overview
+        </button>
+        <button onclick="navigateTab('onboard')" id="nav-onboard" class="nav-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-campus-card/50 transition">
+          Onboarding
+        </button>
+        <button onclick="navigateTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-campus-card/50 transition flex items-center gap-1.5">
+          <span>Dashboard</span>
+          <span class="w-2 h-2 rounded-full bg-campus-green animate-ping"></span>
+        </button>
+        <button onclick="navigateTab('loop')" id="nav-loop" class="nav-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-campus-card/50 transition">
+          Retention Loop
+        </button>
+        <button onclick="navigateTab('algorithm')" id="nav-algorithm" class="nav-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-campus-card/50 transition">
+          Match Algorithm
+        </button>
+      </nav>
+      <!-- Action Button -->
+      <div class="flex items-center space-x-3">
+        <div id="user-badge" class="hidden items-center gap-2 px-3 py-1 rounded-full bg-campus-card border border-campus-border text-xs text-slate-300">
+          <div class="w-2 h-2 rounded-full bg-campus-green"></div>
+          <span id="badge-name">Shourya (CSE 1st Year)</span>
+        </div>
+        <button onclick="navigateTab('onboard')" class="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-campus-blue to-blue-600 text-white hover:opacity-95 shadow-lg shadow-campus-blue/25 hover:shadow-campus-blue/40 transition flex items-center gap-2">
+          <span>Find Frequency</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- ============================================================== -->
+    <!-- VIEW 1: LANDING & PRESENTATION EXPERIENCE                      -->
+    <!-- ============================================================== -->
+    <section id="view-landing" class="space-y-20 animate-fade-in">
+      
+      <!-- Hero Section (Matches Slide 1) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-6 lg:pt-12">
+        <div class="lg:col-span-7 space-y-6">
+          <div class="flex items-center space-x-4">
+            <span class="text-xs font-mono font-bold tracking-widest text-campus-blue uppercase bg-campus-blue/10 border border-campus-blue/20 px-3 py-1 rounded-full">
+              PROTOTYPE V1.0
+            </span>
+            <span class="text-xs font-mono text-slate-400">5,000 Verified Campus Students</span>
+          </div>
+          <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08]">
+            Campus 2.0<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-campus-blue via-sky-300 to-indigo-400">
+              Find your people.
+            </span>
+          </h1>
+          <p class="text-lg sm:text-xl text-slate-300 max-w-xl font-normal leading-relaxed">
+            You're surrounded by 5,000 people. So why is it still so hard to find your people? I want to do something. Help me find people who want to do it too.
+          </p>
+          <div class="pt-2 flex flex-wrap items-center gap-4">
+            <button onclick="navigateTab('onboard')" class="px-7 py-3.5 rounded-xl font-bold bg-campus-blue text-white hover:bg-campus-blueHover shadow-xl shadow-campus-blue/30 transition flex items-center gap-3 group text-base">
+              <span>We have got a solution for you.</span>
+              <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+            </button>
+            <button onclick="navigateTab('dashboard')" class="px-6 py-3.5 rounded-xl font-semibold bg-campus-card hover:bg-campus-cardHover border border-campus-border text-slate-200 transition flex items-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4 text-campus-blue"></i>
+              <span>Explore Live Dashboard</span>
+            </button>
+          </div>
+          <div class="pt-6 border-t border-campus-border/60 flex items-center space-x-4 text-xs text-slate-500 font-mono">
+            <span>Presented by ProdCon</span>
+            <span>•</span>
+            <span class="text-slate-400">Campus Launch Special Edition</span>
+          </div>
+        </div>
+        <!-- Interactive Dilemma Mockups (Matches Slide 1 right side) -->
+        <div class="lg:col-span-5 relative space-y-4">
+          <!-- Background glow -->
+          <div class="absolute -inset-4 bg-gradient-to-r from-campus-blue/15 to-campus-purple/15 rounded-3xl blur-2xl pointer-events-none"></div>
+          <!-- Dilemma Card 1 -->
+          <div class="relative bg-campus-card/90 border border-campus-border/80 rounded-2xl p-5 shadow-2xl backdrop-blur-md transition hover:border-campus-blue/60 group">
+            <div class="flex items-start gap-4">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80" alt="Marcus" class="w-14 h-14 rounded-full object-cover ring-2 ring-campus-blue/40">
+                <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-campus-green ring-2 ring-campus-card"></span>
+              </div>
+              <div class="flex-1 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-slate-300">Marcus • Mech 2nd Year</span>
+                  <span class="text-[10px] text-slate-500 font-mono">Friday 4:15 PM</span>
+                </div>
+                <div class="bg-[#0b142b] border border-campus-border/60 rounded-xl rounded-tl-none p-3 text-sm text-slate-200 shadow-inner">
+                  <div class="flex items-center gap-2 text-campus-blue mb-1">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                    <span class="text-[11px] font-bold uppercase tracking-wider">Passing Intention</span>
+                  </div>
+                  "Bowling on the weekend would be fun, I wonder who I can go with..."
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Frequency Matching Connector Pulse -->
+          <div class="flex items-center justify-center my-1">
+            <div class="px-4 py-1.5 rounded-full bg-gradient-to-r from-campus-blue/20 via-campus-purple/20 to-campus-blue/20 border border-campus-blue/40 flex items-center gap-2 text-xs font-semibold text-campus-cyan shadow-lg shadow-campus-blue/10 animate-pulse">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-campus-blue"></i>
+              <span>Match Signal Found: 96% Interest + Time Overlap</span>
+            </div>
+          </div>
+          <!-- Dilemma Card 2 -->
+          <div class="relative bg-campus-card/90 border border-campus-border/80 rounded-2xl p-5 shadow-2xl backdrop-blur-md transition hover:border-campus-blue/60 group">
+            <div class="flex items-start gap-4">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=160&q=80" alt="Maya" class="w-14 h-14 rounded-full object-cover ring-2 ring-campus-purple/40">
+                <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-campus-green ring-2 ring-campus-card"></span>
+              </div>
+              <div class="flex-1 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-slate-300">Maya • Design 1st Year</span>
+                  <span class="text-[10px] text-slate-500 font-mono">Friday 4:22 PM</span>
+                </div>
+                <div class="bg-[#0b142b] border border-campus-border/60 rounded-xl rounded-tl-none p-3 text-sm text-slate-200 shadow-inner">
+                  <div class="flex items-center gap-2 text-campus-purple mb-1">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                    <span class="text-[11px] font-bold uppercase tracking-wider">Unspoken Desire</span>
+                  </div>
+                  "I wanna try bowling but none of my friends like that..."
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Bottom CTA Pill -->
+          <div onclick="navigateTab('onboard')" class="cursor-pointer bg-gradient-to-r from-campus-blue to-blue-600 rounded-2xl p-4 shadow-xl flex items-center justify-between text-white font-bold group hover:opacity-95 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
+                <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <div class="text-sm">We have got a solution for you.</div>
+                <div class="text-[11px] font-normal text-white/80">Turn fragmented intents into real-world meetups.</div>
+              </div>
+            </div>
+            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1.5 transition-transform"></i>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 2: The Problem & Why It Breaks -->
+      <div class="border-t border-campus-border/60 pt-16">
+        <div class="text-xs font-mono font-bold tracking-widest text-campus-blue uppercase mb-2">01. THE PROBLEM</div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-10">
+          The campus is crowded. Discovery is fragmented.
+        </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          
+          <!-- Column 1: Today's Scatter -->
+          <div class="lg:col-span-4 bg-campus-card border border-campus-border rounded-2xl p-6 space-y-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="scatter-chart" class="w-5 h-5 text-campus-cyan"></i>
+              Today's Scatter
+            </h3>
+            <ul class="space-y-3.5 text-sm text-slate-300">
+              <li class="flex items-center gap-3 p-2.5 rounded-xl bg-campus-dark/70 border border-campus-border/50">
+                <i data-lucide="message-circle" class="w-4 h-4 text-green-400"></i>
+                <span>Scattered WhatsApp groups (100+ unread noise)</span>
+              </li>
+              <li class="flex items-center gap-3 p-2.5 rounded-xl bg-campus-dark/70 border border-campus-border/50">
+                <i data-lucide="instagram" class="w-4 h-4 text-pink-400"></i>
+                <span>Fleeting Instagram stories (gone in 24 hrs)</span>
+              </li>
+              <li class="flex items-center gap-3 p-2.5 rounded-xl bg-campus-dark/70 border border-campus-border/50">
+                <i data-lucide="users" class="w-4 h-4 text-campus-blue"></i>
+                <span>Siloed club networks with gatekept rosters</span>
+              </li>
+              <li class="flex items-center gap-3 p-2.5 rounded-xl bg-campus-dark/70 border border-campus-border/50">
+                <i data-lucide="volume-2" class="w-4 h-4 text-yellow-400"></i>
+                <span>Slow, hit-or-miss word of mouth</span>
+              </li>
+            </ul>
+          </div>
+          <!-- Column 2: Why It Breaks -->
+          <div class="lg:col-span-4 bg-campus-card border border-campus-border rounded-2xl p-6 space-y-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400"></i>
+              Why It Breaks
+            </h3>
+            <ul class="space-y-3.5 text-sm text-slate-300">
+              <li class="flex items-start gap-3 p-2.5 rounded-xl bg-campus-dark/70 border border-campus-border/50">
+                <span class="text-red-400 font-bold text-base leading-none">✕</span>
+                <div>
+                  <strong class="text-white">Timing:</strong> Same interest, completely mismatched schedules.
+                </div>
+              </li>
+              <li class="flex items-start gap-3 p-2.5 rounded-xl bg-campus-dark/70 border border-campus-border/50">
+                <span class="text-red-400 font-bold text-base leading-none">✕</span>
+                <div>
+                  <strong class="text-white">Goals:</strong> Misaligned ambition, commitment or skill level.
+                </div>
+              </li>
+              <li class="flex items-start gap-3 p-2.5 rounded-xl bg-campus-dark/70 border border-campus-border/50">
+                <span class="text-red-400 font-bold text-base leading-none">✕</span>
+                <div>
+                  <strong class="text-white">Visibility:</strong> Perfect match stays hidden 50 meters away in another dorm.
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- Column 3: The Revelation Box (Slide 2 Accent Card) -->
+          <div class="lg:col-span-4 bg-gradient-to-br from-[#0c1836] to-[#12224d] border-2 border-campus-blue rounded-2xl p-8 flex flex-col justify-between glow-blue relative overflow-hidden">
+            <div class="w-12 h-12 rounded-xl bg-campus-blue/20 border border-campus-blue/40 flex items-center justify-center text-campus-blue mb-6">
+              <i data-lucide="lightbulb" class="w-6 h-6"></i>
+            </div>
+            
+            <div class="space-y-4 my-auto">
+              <p class="text-xl sm:text-2xl font-bold text-white leading-snug">
+                The problem isn't finding people.
+              </p>
+              <p class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-campus-blue to-sky-300">
+                It's finding <span class="italic underline decoration-campus-blue">your</span> people.
+              </p>
+            </div>
+            <div class="pt-6">
+              <button onclick="navigateTab('onboard')" class="w-full py-3 rounded-xl bg-campus-blue hover:bg-campus-blueHover text-white font-semibold text-sm transition flex items-center justify-center gap-2">
+                <span>See the Matching Engine</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 3 & 4: Core User Persona (Shourya) & Solitude Break -->
+      <div class="border-t border-campus-border/60 pt-16">
+        <div class="text-xs font-mono font-bold tracking-widest text-campus-blue uppercase mb-2">02. CORE USER</div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-campus-card/70 border border-campus-border rounded-3xl p-6 lg:p-10">
+          
+          <!-- Student Image Card -->
+          <div class="lg:col-span-5 relative group">
+            <div class="relative rounded-2xl overflow-hidden border border-campus-border/80 shadow-2xl">
+              <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80" alt="Shourya" class="w-full h-80 object-cover group-hover:scale-105 transition duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#070c1a] via-transparent to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4 bg-campus-card/90 backdrop-blur-md p-3.5 rounded-xl border border-campus-border flex items-center justify-between">
+                <div>
+                  <h4 class="text-base font-bold text-white">Shourya</h4>
+                  <p class="text-xs text-campus-blue font-medium">CSE • 1st Year (Freshman)</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-campus-green/20 text-campus-green border border-campus-green/40">
+                  Active Now
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- Persona Detail & JTBD -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="text-4xl text-campus-blue/40 font-serif">“</div>
+            <h3 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight -mt-4">
+              "I want to find someone to go running with me."
+            </h3>
+            <!-- Job To Be Done Box -->
+            <div class="bg-campus-dark/90 border border-campus-border p-5 rounded-2xl space-y-2">
+              <span class="text-xs font-mono font-bold uppercase tracking-wider text-campus-blue flex items-center gap-1.5">
+                <i data-lucide="target" class="w-3.5 h-3.5"></i>
+                JOB TO BE DONE
+              </span>
+              <p class="text-sm sm:text-base text-slate-200 font-medium">
+                "Help me find someone who wants to do the same thing, at a time, place, and skill level that works for both of us."
+              </p>
+            </div>
+            <!-- Pre-validated Activity Tags -->
+            <div class="space-y-2">
+              <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Common Activity Intents:</span>
+              <div class="flex flex-wrap gap-2.5">
+                <button onclick="filterByTag('Morning Runs')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-blue/20 text-campus-cyan border border-campus-blue/40 hover:bg-campus-blue/30 transition">
+                  🏃 Morning Runs
+                </button>
+                <button onclick="filterByTag('Sports Partners')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white hover:border-campus-blue transition">
+                  🏸 Sports Partners
+                </button>
+                <button onclick="filterByTag('Study Groups')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white hover:border-campus-blue transition">
+                  📚 Study Groups
+                </button>
+                <button onclick="filterByTag('Creative Jams')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white hover:border-campus-blue transition">
+                  🎸 Creative Jams
+                </button>
+                <button onclick="filterByTag('Bowling')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white hover:border-campus-blue transition">
+                  🎳 Weekend Bowling
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 5: Product Overview & Three Pillars -->
+      <div class="border-t border-campus-border/60 pt-16">
+        <div class="text-center max-w-3xl mx-auto space-y-4 mb-14">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-campus-blue/10 border border-campus-blue/30 text-campus-blue text-xs font-semibold">
+            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+            03. PRODUCT OVERVIEW
+          </div>
+          <h2 class="text-4xl sm:text-5xl font-extrabold text-white">
+            Campus 2.0
+          </h2>
+          <p class="text-lg text-slate-300">
+            The definitive campus layer designed to turn passing intentions into real-world connections.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          <!-- Pillar 1 -->
+          <div class="bg-campus-card border border-campus-border hover:border-campus-blue/60 transition duration-300 rounded-3xl p-7 flex flex-col justify-between group">
+            <div class="space-y-5">
+              <div class="w-14 h-14 rounded-2xl bg-campus-blue/15 border border-campus-blue/30 flex items-center justify-center text-campus-blue group-hover:scale-110 transition-transform">
+                <i data-lucide="users" class="w-7 h-7"></i>
+              </div>
+              <h3 class="text-xl font-bold text-white">Shared Interests</h3>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                Discover and meet compatible peers based on exact activities, goals, and skill levels. No superficial small talk.
+              </p>
+            </div>
+            <div class="mt-8 pt-4 border-t border-campus-border/50 text-xs font-semibold text-campus-cyan flex items-center gap-1.5">
+              <span>Contextual Affinity Engine</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <!-- Pillar 2 -->
+          <div class="bg-campus-card border border-campus-border hover:border-campus-purple/60 transition duration-300 rounded-3xl p-7 flex flex-col justify-between group">
+            <div class="space-y-5">
+              <div class="w-14 h-14 rounded-2xl bg-campus-purple/15 border border-campus-purple/30 flex items-center justify-center text-campus-purple group-hover:scale-110 transition-transform">
+                <i data-lucide="calendar" class="w-7 h-7"></i>
+              </div>
+              <h3 class="text-xl font-bold text-white">Effortless Planning</h3>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                Coordinate logistics, sync schedules, and organize meetups seamlessly in one place with frictionless RSVP.
+              </p>
+            </div>
+            <div class="mt-8 pt-4 border-t border-campus-border/50 text-xs font-semibold text-campus-purple flex items-center gap-1.5">
+              <span>Zero-Friction Scheduling</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <!-- Pillar 3 -->
+          <div class="bg-campus-card border border-campus-border hover:border-campus-green/60 transition duration-300 rounded-3xl p-7 flex flex-col justify-between group">
+            <div class="space-y-5">
+              <div class="w-14 h-14 rounded-2xl bg-campus-green/15 border border-campus-green/30 flex items-center justify-center text-campus-green group-hover:scale-110 transition-transform">
+                <i data-lucide="award" class="w-7 h-7"></i>
+              </div>
+              <h3 class="text-xl font-bold text-white">Activity Rewards</h3>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                Earn milestone badges and exclusive partner coupons for showing up, participating, and building real campus trust.
+              </p>
+            </div>
+            <div class="mt-8 pt-4 border-t border-campus-border/50 text-xs font-semibold text-campus-green flex items-center gap-1.5">
+              <span>Incentivized Real-World Action</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 9: Expansion Vision & Call To Action -->
+      <div class="border-t border-campus-border/60 pt-16 pb-8">
+        <div class="bg-gradient-to-br from-campus-card via-[#0e1730] to-campus-darkest border border-campus-border rounded-3xl p-8 lg:p-12 text-center space-y-8">
+          <div class="space-y-4 max-w-2xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
+              You set the time and place.<br/>
+              We find your <span class="text-campus-blue underline decoration-sky-400">frequency</span>.
+            </h2>
+            <p class="text-base sm:text-lg text-slate-300">
+              Campus 2.0 isn't about screen time. It's about real-world connection.
+            </p>
+          </div>
+          <!-- Expansion Roadmap -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 text-left max-w-4xl mx-auto">
+            <div class="p-5 rounded-2xl bg-campus-dark/80 border border-campus-blue/40 relative">
+              <span class="w-8 h-8 rounded-lg bg-campus-blue text-white font-bold flex items-center justify-center text-xs mb-3">01</span>
+              <h4 class="text-base font-bold text-white">Phase 1: Launch</h4>
+              <p class="text-xs text-slate-400 mt-1">Validate the matching engine on a single, dense 5,000-student campus.</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-campus-dark/80 border border-campus-border relative">
+              <span class="w-8 h-8 rounded-lg bg-campus-purple text-white font-bold flex items-center justify-center text-xs mb-3">02</span>
+              <h4 class="text-base font-bold text-white">Phase 2: Scale</h4>
+              <p class="text-xs text-slate-400 mt-1">Replicate success across multiple state-level university campuses.</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-campus-dark/80 border border-campus-border relative">
+              <span class="w-8 h-8 rounded-lg bg-campus-green text-white font-bold flex items-center justify-center text-xs mb-3">03</span>
+              <h4 class="text-base font-bold text-white">Phase 3: Network</h4>
+              <p class="text-xs text-slate-400 mt-1">Bridge the gaps. Enable inter-college connections and multi-campus events.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex flex-wrap justify-center gap-4">
+            <button onclick="navigateTab('onboard')" class="px-8 py-3.5 rounded-xl font-bold bg-campus-blue hover:bg-campus-blueHover text-white text-base shadow-xl shadow-campus-blue/30 transition">
+              Launch Onboarding Flow
+            </button>
+            <button onclick="navigateTab('dashboard')" class="px-8 py-3.5 rounded-xl font-bold bg-campus-card border border-campus-border hover:bg-campus-cardHover text-slate-200 text-base transition">
+              Open Dashboard Direct
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================== -->
+    <!-- VIEW 2: ONBOARDING FLOW (/onboard)                              -->
+    <!-- ============================================================== -->
+    <section id="view-onboard" class="hidden max-w-3xl mx-auto space-y-8 animate-fade-in py-4">
+      
+      <!-- Stepper Header -->
+      <div class="text-center space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-campus-blue/10 border border-campus-blue/30 text-campus-blue text-xs font-semibold">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          SEAMLESS ONBOARDING
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
+          Tune into Your Campus Frequency
+        </h2>
+        <p class="text-sm text-slate-400">
+          Exclusive to verified students. It takes under 60 seconds to find your first match.
+        </p>
+      </div>
+      <!-- Multi-step Indicator -->
+      <div class="flex items-center justify-between px-4 sm:px-8 py-4 bg-campus-card border border-campus-border rounded-2xl">
+        <div class="flex items-center gap-3">
+          <div id="step-badge-1" class="w-8 h-8 rounded-full bg-campus-blue text-white font-bold flex items-center justify-center text-sm ring-4 ring-campus-blue/20">
+            1
+          </div>
+          <div class="hidden sm:block text-left">
+            <div class="text-xs font-bold text-white">Scholar Verification</div>
+            <div class="text-[11px] text-slate-400">Student credentials</div>
+          </div>
+        </div>
+        <div class="h-0.5 w-12 sm:w-20 bg-campus-border"></div>
+        <div class="flex items-center gap-3">
+          <div id="step-badge-2" class="w-8 h-8 rounded-full bg-campus-dark border border-campus-border text-slate-400 font-bold flex items-center justify-center text-sm">
+            2
+          </div>
+          <div class="hidden sm:block text-left">
+            <div class="text-xs font-bold text-slate-400">Profile & Goals</div>
+            <div class="text-[11px] text-slate-500">Hobbies & skills</div>
+          </div>
+        </div>
+        <div class="h-0.5 w-12 sm:w-20 bg-campus-border"></div>
+        <div class="flex items-center gap-3">
+          <div id="step-badge-3" class="w-8 h-8 rounded-full bg-campus-dark border border-campus-border text-slate-400 font-bold flex items-center justify-center text-sm">
+            3
+          </div>
+          <div class="hidden sm:block text-left">
+            <div class="text-xs font-bold text-slate-400">Social Sync</div>
+            <div class="text-[11px] text-slate-500">Spotify & LinkedIn</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step Container Card -->
+      <div class="bg-campus-card border border-campus-border rounded-3xl p-6 sm:p-10 shadow-2xl relative">
+        <!-- STEP 1: SCHOLAR VERIFICATION -->
+        <div id="onboard-step-1" class="space-y-6">
+          <div class="space-y-1">
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-5 h-5 text-campus-blue"></i>
+              Scholar Verification
+            </h3>
+            <p class="text-xs text-slate-400">
+              Only verified university peers can discover activities and connect.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Official Student Email (.edu)</label>
+              <div class="relative">
+                <input type="email" id="input-email" value="shourya.sharma@campus.edu" class="w-full bg-campus-dark border border-campus-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-campus-blue transition pr-10">
+                <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5"></i>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">University / Campus</label>
+                <select id="input-campus" class="w-full bg-campus-dark border border-campus-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-campus-blue transition">
+                  <option>State University (Main Campus - 5,000 Students)</option>
+                  <option>Tech Campus North</option>
+                  <option>Metro Institute of Design</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Student Roll / ID</label>
+                <input type="text" id="input-roll" value="2026-CSE-0142" class="w-full bg-campus-dark border border-campus-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-campus-blue transition">
+              </div>
+            </div>
+            <!-- Instant Verification Simulation Notice -->
+            <div class="p-4 rounded-xl bg-campus-green/10 border border-campus-green/30 text-xs text-campus-green flex items-center gap-3">
+              <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+              <span>College credentials pre-authenticated. Exclusive campus student access granted.</span>
+            </div>
+          </div>
+          <div class="pt-4 flex justify-end">
+            <button onclick="goToOnboardStep(2)" class="px-6 py-3 rounded-xl bg-campus-blue hover:bg-campus-blueHover text-white font-bold text-sm transition flex items-center gap-2">
+              <span>Next: Profile & Interests</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+        <!-- STEP 2: PROFILE & HOBBIES -->
+        <div id="onboard-step-2" class="hidden space-y-6">
+          <div class="space-y-1">
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="user-check" class="w-5 h-5 text-campus-blue"></i>
+              Profile & Achievements
+            </h3>
+            <p class="text-xs text-slate-400">
+              Tell the matching algorithm what you actually want to do on campus.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
+                <input type="text" id="input-name" value="Shourya Sharma" class="w-full bg-campus-dark border border-campus-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-campus-blue">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Major & Academic Year</label>
+                <input type="text" id="input-major" value="CSE 1st Year" class="w-full bg-campus-dark border border-campus-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-campus-blue">
+              </div>
+            </div>
+            <!-- Activity / Hobby Selector -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-2">Select Your Primary Activities (Pick 2 or more)</label>
+              <div class="flex flex-wrap gap-2" id="hobby-pills">
+                <button type="button" onclick="toggleHobby(this)" class="hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-blue text-white border border-campus-blue">
+                  🏃 Morning Runs
+                </button>
+                <button type="button" onclick="toggleHobby(this)" class="hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-dark text-slate-300 border border-campus-border">
+                  🎳 Weekend Bowling
+                </button>
+                <button type="button" onclick="toggleHobby(this)" class="hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-blue text-white border border-campus-blue">
+                  💻 Coding & Hackathons
+                </button>
+                <button type="button" onclick="toggleHobby(this)" class="hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-dark text-slate-300 border border-campus-border">
+                  🏸 Badminton / Tennis
+                </button>
+                <button type="button" onclick="toggleHobby(this)" class="hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-dark text-slate-300 border border-campus-border">
+                  📚 Exam Cram Circles
+                </button>
+                <button type="button" onclick="toggleHobby(this)" class="hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-dark text-slate-300 border border-campus-border">
+                  🎸 Indie Acoustic Jams
+                </button>
+                <button type="button" onclick="toggleHobby(this)" class="hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-dark text-slate-300 border border-campus-border">
+                  ☕ Cafe Brainstorms
+                </button>
+              </div>
+            </div>
+            <!-- Skill Level & Commitment -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Activity Skill Level (10% Weight)</label>
+                <select id="input-skill" class="w-full bg-campus-dark border border-campus-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-campus-blue">
+                  <option value="Beginner">Beginner / Just for Fun</option>
+                  <option value="Intermediate" selected>Intermediate (Regular practice)</option>
+                  <option value="Advanced">Advanced / Competitive</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Primary Goal (18% Weight)</label>
+                <select id="input-goal" class="w-full bg-campus-dark border border-campus-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-campus-blue">
+                  <option value="Fitness" selected>Fitness & Routine</option>
+                  <option value="Casual">Casual Hangout & Fun</option>
+                  <option value="Study">Academic Mastery</option>
+                  <option value="Compete">Hackathon / Tournament</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="pt-4 flex justify-between">
+            <button onclick="goToOnboardStep(1)" class="px-5 py-2.5 rounded-xl bg-campus-dark border border-campus-border text-slate-300 font-semibold text-sm hover:text-white">
+              Back
+            </button>
+            <button onclick="goToOnboardStep(3)" class="px-6 py-3 rounded-xl bg-campus-blue hover:bg-campus-blueHover text-white font-bold text-sm transition flex items-center gap-2">
+              <span>Next: Social Sync</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+        <!-- STEP 3: SOCIAL SYNC -->
+        <div id="onboard-step-3" class="hidden space-y-6">
+          <div class="space-y-1">
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="link" class="w-5 h-5 text-campus-blue"></i>
+              Social Sync (Optional)
+            </h3>
+            <p class="text-xs text-slate-400">
+              Boost compatibility scoring with rich music & professional signals.
+            </p>
+          </div>
+          <div class="space-y-4">
+            
+            <!-- Spotify Blend Toggle -->
+            <div class="p-4 rounded-2xl bg-campus-dark border border-campus-border flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-[#1DB954]/20 border border-[#1DB954]/40 flex items-center justify-center text-[#1DB954]">
+                  <i data-lucide="music" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white">Spotify Blend Match</h4>
+                  <p class="text-xs text-slate-400">Match with peers who share your study & workout genres</p>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggle-spotify" checked class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-campus-green"></div>
+              </label>
+            </div>
+            <!-- LinkedIn Sync Toggle -->
+            <div class="p-4 rounded-2xl bg-campus-dark border border-campus-border flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-[#0A66C2]/20 border border-[#0A66C2]/40 flex items-center justify-center text-[#0A66C2]">
+                  <i data-lucide="linkedin" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white">LinkedIn Sync</h4>
+                  <p class="text-xs text-slate-400">Verify graduation year & display tech/project skill badges</p>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggle-linkedin" checked class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-campus-blue"></div>
+              </label>
+            </div>
+            <!-- Ready Summary Card -->
+            <div class="p-5 rounded-2xl bg-gradient-to-r from-campus-blue/15 via-campus-purple/15 to-transparent border border-campus-blue/30 text-xs text-slate-300 space-y-2">
+              <div class="font-bold text-white flex items-center gap-2">
+                <i data-lucide="check" class="w-4 h-4 text-campus-green"></i>
+                Profile ready for frequency tuning
+              </div>
+              <p>Your profile will match across 5 dimensions: Activity (30%), Availability (22%), Goal (18%), Location (12%), and Skill Level (10%).</p>
+            </div>
+          </div>
+          <div class="pt-4 flex justify-between">
+            <button onclick="goToOnboardStep(2)" class="px-5 py-2.5 rounded-xl bg-campus-dark border border-campus-border text-slate-300 font-semibold text-sm hover:text-white">
+              Back
+            </button>
+            <button onclick="completeOnboarding()" class="px-7 py-3.5 rounded-xl bg-gradient-to-r from-campus-blue to-blue-600 hover:opacity-95 text-white font-extrabold text-sm shadow-xl shadow-campus-blue/30 transition flex items-center gap-2">
+              <span>Launch Into Campus 2.0</span>
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================== -->
+    <!-- VIEW 3: CORE DASHBOARD (/dashboard)                             -->
+    <!-- ============================================================== -->
+    <section id="view-dashboard" class="hidden space-y-8 animate-fade-in">
+      
+      <!-- Dashboard Top Banner -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-campus-card via-[#111e40] to-campus-card border border-campus-border rounded-3xl p-6 sm:p-8">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-mono text-campus-cyan uppercase mb-1">
+            <span class="w-2 h-2 rounded-full bg-campus-green animate-pulse"></span>
+            Campus Frequency Active • 14 Peers In Perimeter
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+            Welcome back, <span id="dash-username">Shourya</span> 👋
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1">
+            Looking for morning runs, coding jams, and weekend recreation at State University.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="openCreateEventModal()" class="px-4 py-2.5 rounded-xl bg-campus-blue hover:bg-campus-blueHover text-white font-bold text-xs sm:text-sm shadow-lg shadow-campus-blue/25 transition flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Schedule Activity</span>
+          </button>
+          <button onclick="navigateTab('loop')" class="px-4 py-2.5 rounded-xl bg-campus-dark border border-campus-border hover:border-campus-green text-slate-200 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+            <i data-lucide="gift" class="w-4 h-4 text-campus-green"></i>
+            <span>Redeem Rewards</span>
+          </button>
+        </div>
+      </div>
+      <!-- Module Navigation Bar inside Dashboard -->
+      <div class="flex overflow-x-auto space-x-2 border-b border-campus-border/60 pb-3">
+        <button onclick="setDashboardTab('matches')" id="dash-tab-matches" class="dash-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-campus-blue text-white shadow-md flex items-center gap-2 shrink-0">
+          <i data-lucide="cpu" class="w-4 h-4"></i>
+          <span>Smart Matching (5-Signal)</span>
+        </button>
+        <button onclick="setDashboardTab('events')" id="dash-tab-events" class="dash-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white flex items-center gap-2 shrink-0">
+          <i data-lucide="calendar" class="w-4 h-4 text-campus-purple"></i>
+          <span>Campus Activities (<span id="event-count-badge">4</span>)</span>
+        </button>
+        <button onclick="setDashboardTab('communities')" id="dash-tab-communities" class="dash-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white flex items-center gap-2 shrink-0">
+          <i data-lucide="users-2" class="w-4 h-4 text-campus-cyan"></i>
+          <span>Existing Communities</span>
+        </button>
+        <button onclick="setDashboardTab('rewards')" id="dash-tab-rewards" class="dash-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white flex items-center gap-2 shrink-0">
+          <i data-lucide="award" class="w-4 h-4 text-campus-green"></i>
+          <span>Milestones & Perks</span>
+        </button>
+      </div>
+      <!-- ============================================== -->
+      <!-- DASHBOARD SUBMODULE 1: SMART MATCHING          -->
+      <!-- ============================================== -->
+      <div id="submod-matches" class="space-y-6">
+        
+        <!-- Algorithm Header Bar (Slide 8 Signal Weighting) -->
+        <div class="bg-campus-card/80 border border-campus-border rounded-2xl p-4 sm:p-5">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <div class="text-xs font-mono font-bold text-campus-blue uppercase flex items-center gap-2">
+                <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                Active Match Signal Weighting
+              </div>
+              <div class="text-sm font-bold text-white mt-0.5">Calculated in real-time across your campus grid:</div>
+            </div>
+            <!-- Signal Pills -->
+            <div class="flex flex-wrap items-center gap-2 text-xs font-mono font-medium">
+              <span class="px-2.5 py-1 rounded-lg bg-sky-500/15 border border-sky-500/40 text-sky-300">
+                Activity: <strong>30%</strong>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-blue-500/15 border border-blue-500/40 text-blue-300">
+                Availability: <strong>22%</strong>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-300">
+                Goal: <strong>18%</strong>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300">
+                Location: <strong>12%</strong>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/40 text-indigo-300">
+                Skill Level: <strong>10%</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- Filter Bar -->
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400">Filter Intent:</span>
+            <button onclick="filterMatches('All')" class="match-filter px-3 py-1 rounded-lg bg-campus-blue text-white font-semibold">All</button>
+            <button onclick="filterMatches('Running')" class="match-filter px-3 py-1 rounded-lg bg-campus-card border border-campus-border text-slate-300 hover:text-white">Running</button>
+            <button onclick="filterMatches('Bowling')" class="match-filter px-3 py-1 rounded-lg bg-campus-card border border-campus-border text-slate-300 hover:text-white">Bowling</button>
+            <button onclick="filterMatches('Coding')" class="match-filter px-3 py-1 rounded-lg bg-campus-card border border-campus-border text-slate-300 hover:text-white">Coding</button>
+            <button onclick="filterMatches('Study')" class="match-filter px-3 py-1 rounded-lg bg-campus-card border border-campus-border text-slate-300 hover:text-white">Study</button>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Sorted by Match Affinity Score</span>
+        </div>
+        <!-- Match Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="matches-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+      <!-- ============================================== -->
+      <!-- DASHBOARD SUBMODULE 2: SCHEDULE EVENTS         -->
+      <!-- ============================================== -->
+      <div id="submod-events" class="hidden space-y-6">
+        
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="calendar-check" class="w-5 h-5 text-campus-purple"></i>
+              Local Campus Meetups & Activities
+            </h3>
+            <p class="text-xs text-slate-400">Real-world sessions happening in the next 48 hours.</p>
+          </div>
+          <button onclick="openCreateEventModal()" class="px-4 py-2 rounded-xl bg-campus-purple hover:bg-purple-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-campus-purple/20 transition flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Host New Activity</span>
+          </button>
+        </div>
+        <!-- Events List Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="events-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <!-- ============================================== -->
+      <!-- DASHBOARD SUBMODULE 3: EXISTING COMMUNITIES    -->
+      <!-- ============================================== -->
+      <div id="submod-communities" class="hidden space-y-6">
+        <div>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="users" class="w-5 h-5 text-campus-cyan"></i>
+            Active Campus Communities & Niche Spaces
+          </h3>
+          <p class="text-xs text-slate-400">Join high-density student clusters organized around deep shared passions.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="communities-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <!-- ============================================== -->
+      <!-- DASHBOARD SUBMODULE 4: REWARDS & GAMIFICATION  -->
+      <!-- ============================================== -->
+      <div id="submod-rewards" class="hidden space-y-8">
+        
+        <!-- Wallet & Status Card -->
+        <div class="bg-gradient-to-r from-campus-card via-[#112440] to-campus-card border border-campus-border rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="space-y-2 text-center md:text-left">
+            <span class="text-xs font-mono font-bold text-campus-green uppercase">Verified Student Wallet</span>
+            <div class="text-3xl sm:text-4xl font-extrabold text-white flex items-center justify-center md:justify-start gap-3">
+              <span id="wallet-points">450</span>
+              <span class="text-base font-semibold text-campus-cyan">Campus Points</span>
+            </div>
+            <p class="text-xs text-slate-300">Level 2 "Active Connector" • 3 meetups away from Silver Status</p>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <button onclick="triggerRetentionSim()" class="px-5 py-3 rounded-xl bg-campus-green hover:bg-emerald-600 text-slate-900 font-extrabold text-xs sm:text-sm shadow-xl shadow-campus-green/20 transition flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-4 h-4"></i>
+              <span>Simulate Completed Activity (+150 pts)</span>
+            </button>
+          </div>
+        </div>
+        <!-- Milestones Badges (Slide 7) -->
+        <div class="space-y-4">
+          <h4 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="medal" class="w-5 h-5 text-campus-purple"></i>
+            Gamified Progression Badges
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            
+            <div class="bg-campus-card border border-campus-border p-5 rounded-2xl space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-xl bg-campus-blue/20 text-campus-blue flex items-center justify-center font-bold">
+                  <i data-lucide="user-plus" class="w-5 h-5"></i>
+                </span>
+                <span class="text-xs font-mono font-bold text-campus-blue">18 / 50</span>
+              </div>
+              <div>
+                <h5 class="text-sm font-bold text-white">Networker Badge</h5>
+                <p class="text-xs text-slate-400 mt-0.5">Meet 50+ new verified peers across campus.</p>
+              </div>
+              <div class="w-full bg-campus-dark rounded-full h-2 overflow-hidden">
+                <div class="bg-campus-blue h-full rounded-full" style="width: 36%"></div>
+              </div>
+            </div>
+            <div class="bg-campus-card border border-campus-border p-5 rounded-2xl space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-xl bg-campus-green/20 text-campus-green flex items-center justify-center font-bold">
+                  <i data-lucide="award" class="w-5 h-5"></i>
+                </span>
+                <span class="text-xs font-mono font-bold text-campus-green">Level 3</span>
+              </div>
+              <div>
+                <h5 class="text-sm font-bold text-white">Skill Master</h5>
+                <p class="text-xs text-slate-400 mt-0.5">Level up in specific hobby categories (5k Runner).</p>
+              </div>
+              <div class="w-full bg-campus-dark rounded-full h-2 overflow-hidden">
+                <div class="bg-campus-green h-full rounded-full" style="width: 70%"></div>
+              </div>
+            </div>
+            <div class="bg-campus-card border border-campus-border p-5 rounded-2xl space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-xl bg-campus-purple/20 text-campus-purple flex items-center justify-center font-bold">
+                  <i data-lucide="crown" class="w-5 h-5"></i>
+                </span>
+                <span class="text-xs font-mono font-bold text-campus-purple">3 / 5</span>
+              </div>
+              <div>
+                <h5 class="text-sm font-bold text-white">Community Pillar</h5>
+                <p class="text-xs text-slate-400 mt-0.5">Host or organize 5+ approved group activities.</p>
+              </div>
+              <div class="w-full bg-campus-dark rounded-full h-2 overflow-hidden">
+                <div class="bg-campus-purple h-full rounded-full" style="width: 60%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Local Campus Coupons (Slide 7 & Slide 8) -->
+        <div class="space-y-4">
+          <h4 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="tag" class="w-5 h-5 text-campus-green"></i>
+            Unlockable Local Partner Coupons
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="coupons-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================== -->
+    <!-- VIEW 4: RETENTION & REWARD LOOP VIEW (Slide 8 & 7)             -->
+    <!-- ============================================================== -->
+    <section id="view-loop" class="hidden max-w-4xl mx-auto space-y-12 animate-fade-in py-6">
+      
+      <div class="text-center space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-campus-green/10 border border-campus-green/30 text-campus-green text-xs font-semibold">
+          <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+          06. THE RETENTION LOOP
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white">
+          Real-World Action &rarr; Real Rewards
+        </h2>
+        <p class="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto">
+          Rewarding real-world activities with exclusive coupons and status badges creates a powerful feedback loop. Users return to deepen existing bonds and unlock higher-tier group perks.
+        </p>
+      </div>
+      <!-- 4-Step Interactive Loop Diagram -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+        
+        <!-- Step 1 -->
+        <div id="loop-card-1" class="bg-campus-card border-2 border-campus-blue/60 p-6 rounded-3xl space-y-4 glow-blue transition duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-campus-blue/20 text-campus-blue flex items-center justify-center font-bold text-lg">
+            1
+          </div>
+          <div>
+            <h4 class="text-base font-bold text-white">Real-World Action</h4>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Users meet and complete a scheduled activity (e.g. 5K run or study sprint). QR verification confirms presence.
+            </p>
+          </div>
+          <span class="inline-flex text-[11px] font-mono text-campus-blue font-semibold">Verified Attendance</span>
+        </div>
+        <!-- Step 2 -->
+        <div id="loop-card-2" class="bg-campus-card border border-campus-border p-6 rounded-3xl space-y-4 transition duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-campus-cyan/20 text-campus-cyan flex items-center justify-center font-bold text-lg">
+            2
+          </div>
+          <div>
+            <h4 class="text-base font-bold text-white">Earn Rewards</h4>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Group immediately unlocks milestone badges and exclusive local partner coupons (BOGO coffee, bowling discounts).
+            </p>
+          </div>
+          <span class="inline-flex text-[11px] font-mono text-campus-cyan font-semibold">Instant Gratification</span>
+        </div>
+        <!-- Step 3 -->
+        <div id="loop-card-3" class="bg-campus-card border border-campus-border p-6 rounded-3xl space-y-4 transition duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-campus-purple/20 text-campus-purple flex items-center justify-center font-bold text-lg">
+            3
+          </div>
+          <div>
+            <h4 class="text-base font-bold text-white">Strengthen Bonds</h4>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Shared achievements and physical camaraderie build authentic trust, removing the social anxiety of future meetups.
+            </p>
+          </div>
+          <span class="inline-flex text-[11px] font-mono text-campus-purple font-semibold">Psychological Safety</span>
+        </div>
+        <!-- Step 4 -->
+        <div id="loop-card-4" class="bg-campus-card border border-campus-border p-6 rounded-3xl space-y-4 transition duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-campus-green/20 text-campus-green flex items-center justify-center font-bold text-lg">
+            4
+          </div>
+          <div>
+            <h4 class="text-base font-bold text-white">Habit Formation</h4>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Users eagerly schedule the next activity together, locking in recurring campus rituals and compounding affinity.
+            </p>
+          </div>
+          <span class="inline-flex text-[11px] font-mono text-campus-green font-semibold">High Retention</span>
+        </div>
+      </div>
+      <!-- Live Interactive Simulation Box -->
+      <div class="bg-campus-card border border-campus-border rounded-3xl p-8 space-y-6 text-center">
+        <h3 class="text-xl font-bold text-white">Test the Loop Engine in Real Time</h3>
+        <p class="text-sm text-slate-300 max-w-xl mx-auto">
+          Simulate Shourya meeting Marcus for their scheduled 5K Morning Run and watch the retention engine trigger in sequence.
+        </p>
+        <div class="flex justify-center">
+          <button onclick="triggerRetentionSim()" class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-campus-blue via-campus-purple to-campus-green text-white font-extrabold text-sm shadow-xl shadow-campus-blue/25 hover:opacity-95 transition flex items-center gap-3">
+            <i data-lucide="play" class="w-4 h-4"></i>
+            <span>Simulate Real-World Meetup Completion</span>
+          </button>
+        </div>
+        <div id="sim-feedback" class="hidden p-4 rounded-2xl bg-campus-dark border border-campus-green text-sm text-campus-green flex items-center justify-center gap-2">
+          <i data-lucide="check-circle" class="w-5 h-5 text-campus-green"></i>
+          <span id="sim-text">Attendance Verified! +150 Points earned & Brew & Bean BOGO Coupon Unlocked!</span>
+        </div>
+      </div>
+      <!-- Cold Start Strategy Box (Slide 8) -->
+      <div class="bg-campus-card/70 border border-campus-border rounded-3xl p-8 space-y-6">
+        <div class="text-xs font-mono font-bold tracking-widest text-amber-400 uppercase flex items-center gap-2">
+          <i data-lucide="flame" class="w-4 h-4 text-amber-400"></i>
+          SOLVING THE COLD START
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-4 rounded-xl bg-campus-dark border border-campus-border/60 space-y-2">
+            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-amber-400">✓</span> Instant Icebreakers
+            </h5>
+            <p class="text-xs text-slate-400">Pre-validated shared interests eliminate initial messaging friction and awkward hesitations.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-campus-dark border border-campus-border/60 space-y-2">
+            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-amber-400">✓</span> High-Intent Seeding
+            </h5>
+            <p class="text-xs text-slate-400">Onboard existing club leaders first to guarantee early activity matches and host density.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-campus-dark border border-campus-border/60 space-y-2">
+            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-amber-400">✓</span> Focused Rollout
+            </h5>
+            <p class="text-xs text-slate-400">Limit initial launch to 3–5 core activities (Running, Bowling, Coding) to maximize density.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================== -->
+    <!-- VIEW 5: MATCH ALGORITHM DEEP DIVE (Slide 8)                    -->
+    <!-- ============================================================== -->
+    <section id="view-algorithm" class="hidden max-w-4xl mx-auto space-y-10 animate-fade-in py-6">
+      
+      <div class="text-center space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-campus-blue/10 border border-campus-blue/30 text-campus-blue text-xs font-semibold">
+          <i data-lucide="binary" class="w-3.5 h-3.5"></i>
+          MATHEMATICAL SPECIFICATION
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
+          The Campus 2.0 Weighted Matching Algorithm
+        </h2>
+        <p class="text-sm text-slate-400 max-w-xl mx-auto">
+          Moving beyond superficial photo swiping. Mathematical affinity calculated across 5 core signal vectors.
+        </p>
+      </div>
+      <!-- Formula Card -->
+      <div class="bg-campus-card border border-campus-border rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between border-b border-campus-border/60 pb-4">
+          <span class="text-sm font-bold text-white">Affinity Score Formula</span>
+          <span class="text-xs font-mono text-campus-cyan">Score ∈ [0, 100%]</span>
+        </div>
+        <div class="bg-campus-darkest p-4 rounded-xl font-mono text-sm text-slate-200 border border-campus-border overflow-x-auto">
+          <code>Score = (0.30 × Activity) + (0.22 × Availability) + (0.18 × Goal) + (0.12 × Location) + (0.10 × Skill)</code>
+        </div>
+        <!-- Visual Signal Weight Breakdown Bars (matches Slide 8) -->
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+              <span class="text-sky-400">1. Activity Alignment (Exact Hobby & Modality)</span>
+              <span>30%</span>
+            </div>
+            <div class="w-full bg-campus-dark h-3 rounded-full overflow-hidden">
+              <div class="bg-sky-400 h-full rounded-full" style="width: 30%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+              <span class="text-blue-400">2. Availability Overlap (Schedule & Free Windows)</span>
+              <span>22%</span>
+            </div>
+            <div class="w-full bg-campus-dark h-3 rounded-full overflow-hidden">
+              <div class="bg-blue-400 h-full rounded-full" style="width: 22%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+              <span class="text-emerald-400">3. Goal Congruence (Fun vs Serious vs Competitive)</span>
+              <span>18%</span>
+            </div>
+            <div class="w-full bg-campus-dark h-3 rounded-full overflow-hidden">
+              <div class="bg-emerald-400 h-full rounded-full" style="width: 18%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+              <span class="text-amber-400">4. Location Proximity (Dorm Quad, Campus Track, Library)</span>
+              <span>12%</span>
+            </div>
+            <div class="w-full bg-campus-dark h-3 rounded-full overflow-hidden">
+              <div class="bg-amber-400 h-full rounded-full" style="width: 12%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+              <span class="text-indigo-400">5. Skill Level Parity (Beginner / Inter / Advanced)</span>
+              <span>10%</span>
+            </div>
+            <div class="w-full bg-campus-dark h-3 rounded-full overflow-hidden">
+              <div class="bg-indigo-400 h-full rounded-full" style="width: 10%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- ================= ICEBREAKER CHAT MODAL ================= -->
+  <div id="icebreaker-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-campus-card border border-campus-border rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
+      
+      <!-- Close button -->
+      <button onclick="closeIcebreakerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <!-- Modal Header -->
+      <div class="flex items-center gap-3.5 border-b border-campus-border/60 pb-4">
+        <img id="chat-peer-img" src="" alt="Peer" class="w-12 h-12 rounded-full object-cover ring-2 ring-campus-blue">
+        <div>
+          <h3 id="chat-peer-name" class="text-base font-bold text-white">Peer Name</h3>
+          <p id="chat-peer-meta" class="text-xs text-campus-blue">Major & Year</p>
+        </div>
+        <div class="ml-auto text-right">
+          <span id="chat-peer-score" class="px-2.5 py-1 rounded-full text-xs font-bold bg-campus-blue/20 text-campus-cyan border border-campus-blue/40">
+            96% Match
+          </span>
+        </div>
+      </div>
+      <!-- Pre-validated Shared Signals -->
+      <div class="bg-campus-dark p-3.5 rounded-xl border border-campus-border text-xs space-y-1.5">
+        <div class="font-bold text-white flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-campus-blue"></i>
+          Pre-Validated Shared Ground
+        </div>
+        <p id="chat-shared-reason" class="text-slate-300">Both looking for Morning Runs around Campus Track at 6:30 AM.</p>
+      </div>
+      <!-- Chat History Stream -->
+      <div id="chat-history" class="h-44 overflow-y-auto space-y-3 p-3 bg-campus-darkest/70 rounded-xl border border-campus-border/60 text-xs">
+        <div class="flex justify-center">
+          <span class="text-[10px] text-slate-500 font-mono">End-to-End Verified Campus Connect</span>
+        </div>
+        <div class="flex items-start gap-2">
+          <div class="bg-campus-card p-2.5 rounded-xl text-slate-200 max-w-[80%] border border-campus-border/50">
+            Hey! Saw you're looking for someone to run the campus perimeter loop early in the mornings too!
+          </div>
+        </div>
+      </div>
+      <!-- Instant Icebreakers (Slide 8: "Instant Icebreakers eliminate initial messaging friction") -->
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Suggested One-Tap Icebreakers:</span>
+        <div class="flex flex-wrap gap-1.5" id="suggested-icebreakers">
+          <!-- Dynamic Pills -->
+        </div>
+      </div>
+      <!-- Chat Input Field -->
+      <div class="flex gap-2">
+        <input type="text" id="chat-input-text" placeholder="Type a message or tap an icebreaker above..." class="flex-1 bg-campus-dark border border-campus-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-campus-blue">
+        <button onclick="sendChatMessage()" class="px-4 py-2.5 bg-campus-blue hover:bg-campus-blueHover text-white font-bold rounded-xl text-xs transition flex items-center gap-1">
+          <span>Send</span>
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- ================= CREATE EVENT MODAL ================= -->
+  <div id="create-event-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-campus-card border border-campus-border rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative animate-fade-in">
+      
+      <button onclick="closeCreateEventModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="border-b border-campus-border/60 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="calendar-plus" class="w-5 h-5 text-campus-blue"></i>
+          Host a Campus Activity
+        </h3>
+        <p class="text-xs text-slate-400">Post a real-world intention and gather your crew.</p>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Activity Title</label>
+          <input type="text" id="event-new-title" placeholder="e.g. Sunset 5K Perimeter Jog" class="w-full bg-campus-dark border border-campus-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-campus-blue">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Category</label>
+            <select id="event-new-cat" class="w-full bg-campus-dark border border-campus-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-campus-blue">
+              <option value="Sports">Sports & Fitness</option>
+              <option value="Social">Recreation & Fun</option>
+              <option value="Study">Study & Hack</option>
+              <option value="Creative">Creative & Music</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Max Spots</label>
+            <input type="number" id="event-new-spots" value="4" min="2" max="20" class="w-full bg-campus-dark border border-campus-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-campus-blue">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Time & Day</label>
+            <input type="text" id="event-new-time" placeholder="Tomorrow, 6:30 AM" class="w-full bg-campus-dark border border-campus-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-campus-blue">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Campus Location</label>
+            <input type="text" id="event-new-loc" placeholder="North Track Bleachers" class="w-full bg-campus-dark border border-campus-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-campus-blue">
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Skill Requirement</label>
+          <select id="event-new-skill" class="w-full bg-campus-dark border border-campus-border rounded-xl px-3 py-2 text-white focus:outline-none focus:border-campus-blue">
+            <option>All Skill Levels Welcome</option>
+            <option>Intermediate (Pace 5:30/km)</option>
+            <option>Advanced / Competitive</option>
+          </select>
+        </div>
+      </div>
+      <div class="pt-3 flex justify-end gap-2">
+        <button onclick="closeCreateEventModal()" class="px-4 py-2 rounded-xl bg-campus-dark text-slate-300 text-xs">Cancel</button>
+        <button onclick="submitNewEvent()" class="px-5 py-2.5 rounded-xl bg-campus-blue text-white font-bold text-xs hover:bg-campus-blueHover shadow-lg">Publish Event</button>
+      </div>
+    </div>
+  </div>
+  <!-- ================= REDEEM COUPON MODAL ================= -->
+  <div id="coupon-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-campus-card border border-campus-border rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative animate-fade-in">
+      <button onclick="closeCouponModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="w-14 h-14 rounded-2xl bg-campus-green/20 text-campus-green flex items-center justify-center mx-auto text-2xl">
+        🎉
+      </div>
+      <div class="space-y-1">
+        <h3 id="modal-coupon-title" class="text-lg font-bold text-white">Partner Coupon Unlocked</h3>
+        <p id="modal-coupon-partner" class="text-xs text-campus-green font-semibold">Brew & Bean Coffee</p>
+      </div>
+      <!-- Barcode simulation -->
+      <div class="bg-white p-4 rounded-xl text-black space-y-2">
+        <div class="font-mono font-bold tracking-widest text-base" id="modal-coupon-code">CAMPUS-BREW-9821</div>
+        <div class="text-[10px] text-slate-500">Show this voucher or scan at the counter on campus</div>
+        <div class="h-10 bg-slate-200 rounded flex items-center justify-center text-xs font-mono text-slate-600">
+          ||||| ||||||| ||| |||||| |||||
+        </div>
+      </div>
+      <button onclick="closeCouponModal()" class="w-full py-2.5 rounded-xl bg-campus-blue text-white font-bold text-xs hover:bg-campus-blueHover">
+        Done
+      </button>
+    </div>
+  </div>
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    // State Store
+    const state = {
+      activeTab: 'landing',
+      dashSubTab: 'matches',
+      user: {
+        name: 'Shourya Sharma',
+        major: 'CSE 1st Year',
+        hobbies: ['Morning Runs', 'Coding & Hackathons', 'Weekend Bowling'],
+        skill: 'Intermediate',
+        goal: 'Fitness & Routine',
+        points: 450
+      },
+      matches: [
+        {
+          id: 1,
+          name: 'Marcus Vance',
+          major: 'Mech • 2nd Year',
+          photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+          category: 'Running',
+          score: 96,
+          intent: 'Looking for a morning runner to hit the 5K loop at 6:30 AM before 9 AM lecture.',
+          shared: 'Both love Morning Runs (Pace 5:30) • North Quad dorm',
+          icebreakers: [
+            "Hey Marcus! What's your usual 5K pace around the perimeter?",
+            "Are you running tomorrow morning at 6:30 AM?"
+          ],
+          breakdown: { activity: 30, availability: 22, goal: 17, location: 12, skill: 10 }
+        },
+        {
+          id: 2,
+          name: 'Maya Lin',
+          major: 'Design • 1st Year',
+          photo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80',
+          category: 'Bowling',
+          score: 93,
+          intent: 'Wants to hit AlleyZone bowling this Friday evening. Splitting lane fees!',
+          shared: 'Both free Friday 7 PM • Casual recreation goal',
+          icebreakers: [
+            "Hey Maya! Still looking for people to split a lane at AlleyZone?",
+            "Count me in for bowling this weekend!"
+          ],
+          breakdown: { activity: 28, availability: 22, goal: 18, location: 11, skill: 9 }
+        },
+        {
+          id: 3,
+          name: 'Rohan Deshmukh',
+          major: 'CSE • 4th Year',
+          photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+          category: 'Coding',
+          score: 91,
+          intent: 'Looking for frontend partner for the upcoming campus 36-hour Hackathon.',
+          shared: 'Both CSE • Hackathon & competitive coding goal',
+          icebreakers: [
+            "Hey Rohan! What stack are you planning to build for the hackathon?",
+            "Saw your post looking for a frontend builder, let's team up!"
+          ],
+          breakdown: { activity: 30, availability: 19, goal: 18, location: 10, skill: 9 }
+        },
+        {
+          id: 4,
+          name: 'Ananya Roy',
+          major: 'Design • 2nd Year',
+          photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+          category: 'Study',
+          score: 88,
+          intent: 'Library Cafe Figma sprint & user testing feedback exchange.',
+          shared: 'Product design & UI/UX interest • Library 3rd floor',
+          icebreakers: [
+            "Hey Ananya! Would love to give feedback on your design prototype.",
+            "Are you at the Library Cafe this afternoon?"
+          ],
+          breakdown: { activity: 26, availability: 20, goal: 18, location: 12, skill: 8 }
+        },
+        {
+          id: 5,
+          name: 'Kabir Mehta',
+          major: 'ECE • 3rd Year',
+          photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+          category: 'Bowling',
+          score: 86,
+          intent: 'Arcade games and bowling strikes with local student discount.',
+          shared: 'Free Friday night • Recreational hangout',
+          icebreakers: [
+            "Do you know if student discount works on Friday evenings?",
+            "Up for a game of bowling this week!"
+          ],
+          breakdown: { activity: 27, availability: 18, goal: 16, location: 11, skill: 9 }
+        },
+        {
+          id: 6,
+          name: 'Meera Iyer',
+          major: 'BioTech • 1st Year',
+          photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+          category: 'Study',
+          score: 84,
+          intent: 'Midterm prep group: Organic chemistry flashcards and past papers.',
+          shared: '1st Year Freshman cohort • Quiet study goal',
+          icebreakers: [
+            "Hey Meera! Do you have the past midterm papers for Chem?",
+            "I'm prepping for midterms too, let's study together."
+          ],
+          breakdown: { activity: 24, availability: 21, goal: 18, location: 10, skill: 8 }
+        }
+      ],
+      events: [
+        {
+          id: 1,
+          title: '🌅 Sunrise Perimeter 5K Run',
+          host: 'Shourya (You)',
+          category: 'Sports',
+          time: 'Tomorrow, 6:30 AM',
+          loc: 'Campus North Track Bleachers',
+          spotsFilled: 3,
+          maxSpots: 4,
+          joined: true,
+          badge: '+50 Pts',
+          skill: 'Pace ~5:30/km'
+        },
+        {
+          id: 2,
+          title: '🎳 Friday Night Strike (Bowling)',
+          host: 'Maya Lin',
+          category: 'Social',
+          time: 'Friday, 7:00 PM',
+          loc: 'AlleyZone (200m from campus)',
+          spotsFilled: 3,
+          maxSpots: 6,
+          joined: false,
+          badge: '30% Off Partner Perk',
+          skill: 'Casual Fun'
+        },
+        {
+          id: 3,
+          title: '☕ Midnight Algorithm & LeetCode Sprint',
+          host: 'Rohan Deshmukh',
+          category: 'Study',
+          time: 'Tonight, 9:30 PM',
+          loc: 'Student Union 2nd Floor Study Lounge',
+          spotsFilled: 7,
+          maxSpots: 10,
+          joined: false,
+          badge: '+75 Pts',
+          skill: 'Intermediate'
+        },
+        {
+          id: 4,
+          title: '🎸 Acoustic Jam on Amphitheater Lawn',
+          host: 'Indie Music Club',
+          category: 'Creative',
+          time: 'Saturday, 5:00 PM',
+          loc: 'Campus Central Amphitheater',
+          spotsFilled: 5,
+          maxSpots: 8,
+          joined: false,
+          badge: 'BOGO Cafe Coupon',
+          skill: 'All Welcome'
+        }
+      ],
+      communities: [
+        {
+          name: 'Campus Runners Collective',
+          members: 142,
+          icon: '🏃',
+          desc: 'Morning joggers, 5K sprinters, and weekend trail explorers.',
+          joined: true
+        },
+        {
+          name: 'Indie Hackers & Coders',
+          members: 310,
+          icon: '💻',
+          desc: 'Building apps, hacking weekend prototypes, and sharing tips.',
+          joined: true
+        },
+        {
+          name: 'Weekend Bowling & Billiards',
+          members: 88,
+          icon: '🎳',
+          desc: 'Strikes, spares, and casual student tournament meetups.',
+          joined: false
+        },
+        {
+          name: 'Acoustic Jam Sessions',
+          members: 64,
+          icon: '🎸',
+          desc: 'Unplugged guitar, songwriting, and lawn jams.',
+          joined: false
+        },
+        {
+          name: 'Deep Focus Study Guild',
+          members: 220,
+          icon: '📚',
+          desc: 'Pomodoro sprints and distraction-free midterm cramming.',
+          joined: false
+        },
+        {
+          name: 'Coffee & Board Game Nights',
+          members: 95,
+          icon: '🎲',
+          desc: 'Settlers of Catan, Chess, and artisan coffee meetups.',
+          joined: false
+        }
+      ],
+      coupons: [
+        {
+          id: 'c1',
+          title: 'Buy 1 Get 1 Free Espresso',
+          partner: 'Brew & Bean Campus Cafe',
+          code: 'BREW-STUDENT-BOGO',
+          pointsReq: 200,
+          unlocked: true,
+          icon: '☕'
+        },
+        {
+          id: 'c2',
+          title: '30% Off Student Lane Rental',
+          partner: 'AlleyZone Bowling',
+          code: 'STRIKE-CAMPUS-30',
+          pointsReq: 350,
+          unlocked: true,
+          icon: '🎳'
+        },
+        {
+          id: 'c3',
+          title: 'Free Garlic Knots with Large Pizza',
+          partner: 'Campus Slice Pizzeria',
+          code: 'SLICE-KNOTS-FREE',
+          pointsReq: 500,
+          unlocked: false,
+          icon: '🍕'
+        },
+        {
+          id: 'c4',
+          title: '15% Off Running Shoes & Apparel',
+          partner: 'Stride Athletics Pro Shop',
+          code: 'STRIDE-15-CAMPUS',
+          pointsReq: 600,
+          unlocked: false,
+          icon: '👟'
+        }
+      ],
+      currentChatPeer: null
+    };
+    // Navigation
+    function navigateTab(tabName) {
+      state.activeTab = tabName;
+      
+      const views = ['landing', 'onboard', 'dashboard', 'loop', 'algorithm'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.toggle('hidden', v !== tabName);
+        
+        const navBtn = document.getElementById(`nav-${v}`);
+        if (navBtn) {
+          if (v === tabName) {
+            navBtn.className = "nav-btn px-3 py-1.5 rounded-lg text-white bg-campus-card border border-campus-border font-bold shadow-sm";
+          } else {
+            navBtn.className = "nav-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-campus-card/50 transition font-medium";
+          }
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+    // Onboarding Step Switcher
+    function goToOnboardStep(step) {
+      [1, 2, 3].forEach(s => {
+        const stepEl = document.getElementById(`onboard-step-${s}`);
+        const badgeEl = document.getElementById(`step-badge-${s}`);
+        if (stepEl) stepEl.classList.toggle('hidden', s !== step);
+        if (badgeEl) {
+          if (s === step) {
+            badgeEl.className = "w-8 h-8 rounded-full bg-campus-blue text-white font-bold flex items-center justify-center text-sm ring-4 ring-campus-blue/20";
+          } else if (s < step) {
+            badgeEl.className = "w-8 h-8 rounded-full bg-campus-green text-slate-900 font-bold flex items-center justify-center text-sm";
+            badgeEl.innerHTML = "✓";
+          } else {
+            badgeEl.className = "w-8 h-8 rounded-full bg-campus-dark border border-campus-border text-slate-400 font-bold flex items-center justify-center text-sm";
+            badgeEl.innerHTML = s;
+          }
+        }
+      });
+      lucide.createIcons();
+    }
+    function toggleHobby(btn) {
+      const isSelected = btn.classList.contains('bg-campus-blue');
+      if (isSelected) {
+        btn.className = "hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-dark text-slate-300 border border-campus-border";
+      } else {
+        btn.className = "hobby-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-campus-blue text-white border border-campus-blue";
+      }
+    }
+    function completeOnboarding() {
+      const name = document.getElementById('input-name').value || 'Shourya Sharma';
+      const major = document.getElementById('input-major').value || 'CSE 1st Year';
+      
+      state.user.name = name;
+      state.user.major = major;
+      document.getElementById('dash-username').innerText = name.split(' ')[0];
+      document.getElementById('badge-name').innerText = `${name} (${major})`;
+      document.getElementById('user-badge').classList.remove('hidden');
+      document.getElementById('user-badge').classList.add('flex');
+      // Trigger Confetti
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      navigateTab('dashboard');
+    }
+    // Dashboard Sub-tab Switcher
+    function setDashboardTab(sub) {
+      state.dashSubTab = sub;
+      const subs = ['matches', 'events', 'communities', 'rewards'];
+      subs.forEach(s => {
+        const el = document.getElementById(`submod-${s}`);
+        const btn = document.getElementById(`dash-tab-${s}`);
+        if (el) el.classList.toggle('hidden', s !== sub);
+        if (btn) {
+          if (s === sub) {
+            btn.className = "dash-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-campus-blue text-white shadow-md flex items-center gap-2 shrink-0";
+          } else {
+            btn.className = "dash-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-campus-card border border-campus-border text-slate-300 hover:text-white flex items-center gap-2 shrink-0";
+          }
+        }
+      });
+      lucide.createIcons();
+    }
+    // Render Match Cards
+    function renderMatches(filter = 'All') {
+      const container = document.getElementById('matches-grid');
+      container.innerHTML = '';
+      const filtered = filter === 'All' 
+        ? state.matches 
+        : state.matches.filter(m => m.category.toLowerCase() === filter.toLowerCase());
+      filtered.forEach(m => {
+        const card = document.createElement('div');
+        card.className = "bg-campus-card border border-campus-border hover:border-campus-blue/60 transition duration-300 rounded-3xl p-6 flex flex-col justify-between group shadow-xl";
+        card.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div class="relative">
+                  <img src="${m.photo}" alt="${m.name}" class="w-12 h-12 rounded-full object-cover ring-2 ring-campus-blue/50">
+                  <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-campus-green ring-2 ring-campus-card"></span>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white group-hover:text-campus-cyan transition">${m.name}</h4>
+                  <p class="text-xs text-slate-400 font-medium">${m.major}</p>
+                </div>
+              </div>
+              <div class="flex flex-col items-end">
+                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-campus-blue/20 text-campus-cyan border border-campus-blue/40">
+                  ${m.score}% Match
+                </span>
+                <span class="text-[10px] text-slate-500 font-mono mt-0.5">Weighted Score</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed bg-campus-dark/70 p-3 rounded-xl border border-campus-border/50">
+              "${m.intent}"
+            </p>
+            <div class="space-y-2">
+              <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-campus-green"></i>
+                <span>${m.shared}</span>
+              </div>
+              
+              <!-- Compatibility breakdown mini bar -->
+              <div class="grid grid-cols-5 gap-1 pt-1">
+                <div class="h-1.5 rounded-full bg-sky-400" title="Activity: ${m.breakdown.activity}%"></div>
+                <div class="h-1.5 rounded-full bg-blue-500" title="Availability: ${m.breakdown.availability}%"></div>
+                <div class="h-1.5 rounded-full bg-emerald-400" title="Goal: ${m.breakdown.goal}%"></div>
+                <div class="h-1.5 rounded-full bg-amber-400" title="Location: ${m.breakdown.location}%"></div>
+                <div class="h-1.5 rounded-full bg-indigo-400" title="Skill: ${m.breakdown.skill}%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="pt-5 mt-4 border-t border-campus-border/60 flex items-center gap-2">
+            <button onclick="openIcebreakerModal(${m.id})" class="flex-1 py-2.5 rounded-xl bg-campus-blue hover:bg-campus-blueHover text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-md">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+              <span>Break the Ice</span>
+            </button>
+            <button onclick="quickInvite(${m.id})" title="Send Activity Invite" class="p-2.5 rounded-xl bg-campus-dark border border-campus-border text-slate-300 hover:text-white hover:border-campus-blue transition">
+              <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+    function filterMatches(category) {
+      document.querySelectorAll('.match-filter').forEach(btn => {
+        if (btn.innerText === category) {
+          btn.className = "match-filter px-3 py-1 rounded-lg bg-campus-blue text-white font-semibold";
+        } else {
+          btn.className = "match-filter px-3 py-1 rounded-lg bg-campus-card border border-campus-border text-slate-300 hover:text-white";
+        }
+      });
+      renderMatches(category);
+    }
+    function filterByTag(tag) {
+      navigateTab('dashboard');
+      setDashboardTab('matches');
+      if (tag === 'Morning Runs') filterMatches('Running');
+      else if (tag === 'Bowling') filterMatches('Bowling');
+      else filterMatches('All');
+    }
+    // Render Events
+    function renderEvents() {
+      const container = document.getElementById('events-grid');
+      container.innerHTML = '';
+      document.getElementById('event-count-badge').innerText = state.events.length;
+      state.events.forEach(ev => {
+        const card = document.createElement('div');
+        card.className = "bg-campus-card border border-campus-border rounded-3xl p-6 space-y-4 shadow-xl flex flex-col justify-between";
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full bg-campus-purple/15 text-campus-purple border border-campus-purple/30">
+                ${ev.category}
+              </span>
+              <span class="text-xs font-mono text-campus-green font-bold">
+                ${ev.badge}
+              </span>
+            </div>
+            <h4 class="text-base font-bold text-white">${ev.title}</h4>
+            <div class="space-y-1.5 text-xs text-slate-300">
+              <div class="flex items-center gap-2">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span>${ev.time}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span>${ev.loc}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-campus-cyan"></i>
+                <span>Hosted by <strong>${ev.host}</strong> (${ev.skill})</span>
+              </div>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-campus-border/60 flex items-center justify-between">
+            <div class="text-xs">
+              <span class="font-bold text-white">${ev.spotsFilled} / ${ev.maxSpots}</span>
+              <span class="text-slate-400"> Spots Taken</span>
+            </div>
+            
+            <button onclick="toggleJoinEvent(${ev.id})" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+              ev.joined 
+                ? 'bg-campus-green/20 text-campus-green border border-campus-green/40' 
+                : 'bg-campus-blue hover:bg-campus-blueHover text-white'
+            }">
+              <i data-lucide="${ev.joined ? 'check' : 'user-plus'}" class="w-3.5 h-3.5"></i>
+              <span>${ev.joined ? 'Attending ✓' : 'Join Activity'}</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+    function toggleJoinEvent(eventId) {
+      const ev = state.events.find(e => e.id === eventId);
+      if (!ev) return;
+      if (ev.joined) {
+        ev.joined = false;
+        ev.spotsFilled = Math.max(0, ev.spotsFilled - 1);
+      } else {
+        if (ev.spotsFilled < ev.maxSpots) {
+          ev.joined = true;
+          ev.spotsFilled += 1;
+          confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+        }
+      }
+      renderEvents();
+    }
+    // Render Communities
+    function renderCommunities() {
+      const container = document.getElementById('communities-grid');
+      container.innerHTML = '';
+      state.communities.forEach(c => {
+        const card = document.createElement('div');
+        card.className = "bg-campus-card border border-campus-border rounded-3xl p-6 space-y-4 shadow-xl flex flex-col justify-between";
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl">${c.icon}</span>
+              <span class="text-xs font-mono text-slate-400">${c.members} Active Students</span>
+            </div>
+            <h4 class="text-base font-bold text-white">${c.name}</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">${c.desc}</p>
+          </div>
+          <div class="pt-4 border-t border-campus-border/60">
+            <button onclick="toggleCommunityJoin(this, '${c.name}')" class="w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+              c.joined 
+                ? 'bg-campus-dark border border-campus-border text-slate-400' 
+                : 'bg-campus-cyan/20 text-campus-cyan border border-campus-cyan/40 hover:bg-campus-cyan/30'
+            }">
+              <i data-lucide="${c.joined ? 'check' : 'plus'}" class="w-3.5 h-3.5"></i>
+              <span>${c.joined ? 'Joined' : 'Join Community'}</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+    function toggleCommunityJoin(btn, name) {
+      const c = state.communities.find(item => item.name === name);
+      if (!c) return;
+      c.joined = !c.joined;
+      c.members += c.joined ? 1 : -1;
+      renderCommunities();
+    }
+    // Render Coupons
+    function renderCoupons() {
+      const container = document.getElementById('coupons-grid');
+      container.innerHTML = '';
+      state.coupons.forEach(cp => {
+        const card = document.createElement('div');
+        card.className = `bg-campus-card border ${cp.unlocked ? 'border-campus-green/40' : 'border-campus-border opacity-70'} rounded-3xl p-6 space-y-4 shadow-xl flex flex-col justify-between`;
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl">${cp.icon}</span>
+              <span class="text-xs font-mono font-bold ${cp.unlocked ? 'text-campus-green' : 'text-slate-500'}">
+                ${cp.unlocked ? 'UNLOCKED' : `${cp.pointsReq} Pts Required`}
+              </span>
+            </div>
+            <div>
+              <h5 class="text-sm font-bold text-white">${cp.title}</h5>
+              <p class="text-xs text-slate-400">${cp.partner}</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-campus-border/60">
+            ${cp.unlocked ? `
+              <button onclick="openCouponModal('${cp.title}', '${cp.partner}', '${cp.code}')" class="w-full py-2.5 rounded-xl bg-campus-green text-slate-900 font-bold text-xs hover:bg-emerald-400 transition flex items-center justify-center gap-1.5 shadow-lg shadow-campus-green/20">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                <span>Redeem Voucher</span>
+              </button>
+            ` : `
+              <button disabled class="w-full py-2.5 rounded-xl bg-campus-dark text-slate-500 font-semibold text-xs border border-campus-border/50 cursor-not-allowed">
+                Earn ${cp.pointsReq - state.user.points} more points
+              </button>
+            `}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+    // Icebreaker Chat Modal
+    function openIcebreakerModal(peerId) {
+      const peer = state.matches.find(m => m.id === peerId);
+      if (!peer) return;
+      state.currentChatPeer = peer;
+      document.getElementById('chat-peer-img').src = peer.photo;
+      document.getElementById('chat-peer-name').innerText = peer.name;
+      document.getElementById('chat-peer-meta').innerText = peer.major;
+      document.getElementById('chat-peer-score').innerText = `${peer.score}% Match`;
+      document.getElementById('chat-shared-reason').innerText = peer.shared;
+      // Populate Suggested Icebreakers
+      const pillBox = document.getElementById('suggested-icebreakers');
+      pillBox.innerHTML = '';
+      peer.icebreakers.forEach(prompt => {
+        const btn = document.createElement('button');
+        btn.className = "text-[11px] bg-campus-dark hover:bg-campus-blue/20 hover:text-campus-cyan border border-campus-border px-2.5 py-1 rounded-lg text-slate-300 text-left transition";
+        btn.innerText = `"${prompt}"`;
+        btn.onclick = () => {
+          document.getElementById('chat-input-text').value = prompt;
+        };
+        pillBox.appendChild(btn);
+      });
+      document.getElementById('icebreaker-modal').classList.remove('hidden');
+      document.getElementById('icebreaker-modal').classList.add('flex');
+      lucide.createIcons();
+    }
+    function closeIcebreakerModal() {
+      document.getElementById('icebreaker-modal').classList.add('hidden');
+      document.getElementById('icebreaker-modal').classList.remove('flex');
+    }
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input-text');
+      const text = input.value.trim();
+      if (!text) return;
+      const history = document.getElementById('chat-history');
+      
+      // User message
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex justify-end";
+      userBubble.innerHTML = `
+        <div class="bg-campus-blue text-white p-2.5 rounded-xl rounded-tr-none text-xs max-w-[80%] shadow-md">
+          ${text}
+        </div>
+      `;
+      history.appendChild(userBubble);
+      input.value = '';
+      history.scrollTop = history.scrollHeight;
+      // Simulated realistic response after 700ms
+      setTimeout(() => {
+        const peerBubble = document.createElement('div');
+        peerBubble.className = "flex justify-start";
+        peerBubble.innerHTML = `
+          <div class="bg-campus-card border border-campus-border/60 text-slate-200 p-2.5 rounded-xl rounded-tl-none text-xs max-w-[80%] shadow-md">
+            Awesome! Let's lock in the time on Campus 2.0. Looking forward to it! 🙌
+          </div>
+        `;
+        history.appendChild(peerBubble);
+        history.scrollTop = history.scrollHeight;
+      }, 700);
+    }
+    function quickInvite(peerId) {
+      const peer = state.matches.find(m => m.id === peerId);
+      if (!peer) return;
+      confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
+      alert(`Activity invite sent to ${peer.name}! They've been notified on their Campus 2.0 app.`);
+    }
+    // Create Event Modal
+    function openCreateEventModal() {
+      document.getElementById('create-event-modal').classList.remove('hidden');
+      document.getElementById('create-event-modal').classList.add('flex');
+      lucide.createIcons();
+    }
+    function closeCreateEventModal() {
+      document.getElementById('create-event-modal').classList.add('hidden');
+      document.getElementById('create-event-modal').classList.remove('flex');
+    }
+    function submitNewEvent() {
+      const title = document.getElementById('event-new-title').value.trim() || 'Weekend Campus Meetup';
+      const cat = document.getElementById('event-new-cat').value;
+      const spots = parseInt(document.getElementById('event-new-spots').value) || 4;
+      const time = document.getElementById('event-new-time').value.trim() || 'This Weekend';
+      const loc = document.getElementById('event-new-loc').value.trim() || 'Campus Student Center';
+      const skill = document.getElementById('event-new-skill').value;
+      state.events.unshift({
+        id: Date.now(),
+        title: title,
+        host: `${state.user.name.split(' ')[0]} (You)`,
+        category: cat,
+        time: time,
+        loc: loc,
+        spotsFilled: 1,
+        maxSpots: spots,
+        joined: true,
+        badge: '+50 Pts',
+        skill: skill
+      });
+      closeCreateEventModal();
+      setDashboardTab('events');
+      renderEvents();
+      confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
+    }
+    // Coupon Modal
+    function openCouponModal(title, partner, code) {
+      document.getElementById('modal-coupon-title').innerText = title;
+      document.getElementById('modal-coupon-partner').innerText = partner;
+      document.getElementById('modal-coupon-code').innerText = code;
+      document.getElementById('coupon-modal').classList.remove('hidden');
+      document.getElementById('coupon-modal').classList.add('flex');
+      lucide.createIcons();
+    }
+    function closeCouponModal() {
+      document.getElementById('coupon-modal').classList.add('hidden');
+      document.getElementById('coupon-modal').classList.remove('flex');
+    }
+    // Retention Loop Simulation Engine
+    function triggerRetentionSim() {
+      const fb = document.getElementById('sim-feedback');
+      const text = document.getElementById('sim-text');
+      
+      // Step cards highlight animation
+      const cards = [1, 2, 3, 4].map(i => document.getElementById(`loop-card-${i}`));
+      cards.forEach((c, idx) => {
+        setTimeout(() => {
+          c.classList.add('border-campus-green', 'glow-green');
+        }, idx * 400);
+      });
+      setTimeout(() => {
+        // Add points
+        state.user.points += 150;
+        document.getElementById('wallet-points').innerText = state.user.points;
+        // Unlock coupon
+        state.coupons[2].unlocked = true;
+        renderCoupons();
+        if (fb) {
+          fb.classList.remove('hidden');
+          text.innerText = `Attendance Verified! +150 Campus Points credited. New Perk Unlocked: Free Garlic Knots at Campus Slice!`;
+        }
+        confetti({
+          particleCount: 100,
+          spread: 80,
+          origin: { y: 0.5 }
+        });
+      }, 1600);
+    }
+    // Initial Bootstrap
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderMatches('All');
+      renderEvents();
+      renderCommunities();
+      renderCoupons();
+    });
+  </script>
+</body>
+</html>
+
